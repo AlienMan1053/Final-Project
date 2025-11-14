@@ -1,6 +1,9 @@
 <?php
+require_once "config.php";
 require_once "session.php";
 $error = '';
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 
     $email = trim($_POST['email']);
@@ -39,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $query->close();
     }
     // Close connection
-    mysqli_close($db);
+    mysqli_close($conn);
 }
 ?>
 <!DOCTYPE html>
