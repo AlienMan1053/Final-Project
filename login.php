@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     }
 
     if (!($error)) {
-        if($query = $db->prepare("SELECT * FROM users WHERE email = ?")) {
+        if($query = $conn->prepare("SELECT * FROM users WHERE email = ?")) {
             $query->bind_param('s', $email);
             $query->execute();
             $row = $query->fetch();
