@@ -1,0 +1,27 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Users CRUD (Email-only Read/Update)</title>
+</head>
+<body>
+  <h1>Users CRUD (Email-only Read/Update)</h1>
+    <label>Username: <input type="text" name="username" id="username"></label><br><br>
+    <label>ID (read by id): <input type="number" name="id" id="id"></label><br><br>
+    <label>Password (create only): <input type="password" name="password" id="password"></label><br><br>
+    <label>Email: <input type="email" name="email" id="email"></label><br><br>
+    <Label>Access Level: 
+      <select name="access_level" id="accesslevel" required>
+        <option value="admin">admin</option>
+        <option value="editor">editor</option>
+        <option value="viewer">viewer</option>
+      </select>
+    </Label><br><br>
+    <Label>Employee Role: <input type="text" name="employeerole" id="employeerole"></Label><br><br>
+
+    <button type="submit">Send</button>
+  </form>
+</body>
+</html>
