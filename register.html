@@ -8,6 +8,16 @@
 </head>
 <body>
   <h1>Users CRUD (Email-only Read/Update)</h1>
+  <form action="register.php" method="POST">
+    <label>Action:
+      <select name="action" id="action" required>
+        <option value="create">create</option>
+        <option value="read">read</option>
+        <option value="update">update</option>
+        <option value="delete">delete</option>
+      </select>
+    </label>
+    <br><br>
     <label>Username: <input type="text" name="username" id="username"></label><br><br>
     <label>ID (read by id): <input type="number" name="id" id="id"></label><br><br>
     <label>Password (create only): <input type="password" name="password" id="password"></label><br><br>
@@ -21,7 +31,7 @@
     </Label><br><br>
     <Label>Employee Role: <input type="text" name="employeerole" id="employeerole"></Label><br><br>
 
-    <button type="submit">Send</button>
+    <input class = "submit" type= "submit" value = "Submit"></label>
   </form>
 </body>
 </html>
