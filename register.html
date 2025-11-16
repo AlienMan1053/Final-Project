@@ -1,4 +1,5 @@
 
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -8,7 +9,9 @@
 </head>
 <body>
   <h1>Users CRUD (Email-only Read/Update)</h1>
+  <h2><b>Log-In</b></h2>
   <form action="register.php" method="POST">
+    
     <label>Action:
       <select name="action" id="action" required>
         <option value="create">create</option>
@@ -23,7 +26,7 @@
     <label>Password (create only): <input type="password" name="password" id="password"></label><br><br>
     <label>Email: <input type="email" name="email" id="email"></label><br><br>
     <Label>Access Level: 
-      <select name="access_level" id="accesslevel" required>
+      <select name="accesslevel" id="accesslevel" required>
         <option value="admin">admin</option>
         <option value="editor">editor</option>
         <option value="viewer">viewer</option>
