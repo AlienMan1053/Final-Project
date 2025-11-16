@@ -1,17 +1,25 @@
-<?php
-require_once "config.php";
-require_once "session.php";
+<?php 
+session_start();
 $error = '';
 
+$DATABASE_HOST = 'localhost';
+$DATABASE_USER = 'reza';
+$DATABASE_PASS = 'aaa';
+$DATABASE_NAME = 'finance_database';
+
+$conn = new mysqli($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
+if ($conn->connect_error) {
+    exit('Error Connecting to the DATABASE form' . $conn->connect_error);
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 
-    $email = trim($_POST['email']);
+    $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
     // validate if email is empty
-    if (empty($email)) {
-        $error .= '<p class="error">Please enter email.</p>';
+    if (empty($username)) {
+        $error .= '<p class="error">Please enter username.</p>';
     }
 
     // validate if password is empty
@@ -19,61 +27,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $error .= '<p class="error">Please enter your password.</p>';
     }
 
-    if (!($error)) {
-        if($query = $conn->prepare("SELECT * FROM users WHERE email = ?")) {
-            $query->bind_param('s', $email);
+    if (empty($error)) {
+        if($query = $conn->prepare("SELECT id, username, password, accesslevel, employeerole FROM users WHERE username = ?")) {
+            $query->bind_param('s', $username);
             $query->execute();
-            $row = $query->fetch();
-            if ($row) {
-                if (password_verify($password, $row['password'])) {
-                    $_SESSION["userid"] = $row['id'];
-                    $_SESSION["user"] = $row;
+            $result = $query->get_result();
 
-                    
-                    header("location: register.html");
-                    exit;
-                } else {
-                    $error .= '<p class="error">The password is not valid.</p>';
-                }
-            } else {
-                $error .= '<p class="error">No User exist with that email address.</p>';
+            if ($result && $result->num_rows ===1){
+                $row = $result->fetch_assoc();
             }
+            
+            if (password_verify($password, $row['password'])) {
+                 $_SESSION["userid"] = $row['id'];
+                 $_SESSION["username"] = $row['username'];
+                 $_SESSION["accesslevel"] = $row['accesslevel'];
+                 $_SESSION["employeerole"] = $row['employeerole'];
+
+                 $query->close();   
+                 header("Location: register.html");
+                 exit;
+             } else {
+                 $error .= '<p class="error">The password is not valid.</p>';
+            }
+            $query->close();
+         } else {
+            $error .= '<p class="error">No User exist with that username address.</p>';
         }
-        $query->close();
+        
+        
     }
     // Close connection
-    mysqli_close($conn);
+    $conn->close();
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Login</title>
-        
-    <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Login</h2>
-                    <p>Please fill in your email and password.</p>
-                    <?php echo $error; ?>
-                    <form action="" method="post">
-                        <div class="form-group">
-                            <label>Email Address:</label>
-                            <input type="email" name="email" class="form-control" required />
-                        </div>    
-                        <div class="form-group">
-                            <label>Password:</label>
-                            <input type="password" name="password" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" name="submit" class="btn btn-primary" value="Submit">
-                        </div>
-                        
-                    </form>
-                </div>
-            </div>
-        </div>    
-    </body>
-</html>
