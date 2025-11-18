@@ -12,6 +12,15 @@ if ($conn->connect_error) {
     exit('Error Connecting to the DATABASE form' . $conn->connect_error);
 }
 
+function addAuditLog($conn, $action) {
+    if ($stmt = $conn->prepare('UPDATE users SET auditlog = CONCAT(IFNULL(auditlog, ""), ?) WHERE username = ?')) {
+        $logEntry = "\n" . date('Y-m-d H:i:s') . " - {$_SESSION['username']} {$action}";
+        $stmt->bind_param('ss', $logEntry, $_SESSION['username']);
+        $stmt->execute();
+        $stmt->close();
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 
     $username = trim($_POST['username']);
@@ -43,8 +52,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                  $_SESSION["accesslevel"] = $row['accesslevel'];
                  $_SESSION["employeerole"] = $row['employeerole'];
 
-                 $query->close();   
+                 $query->close();
+                 $conn->close();
                  header("Location: register.html");
+                 addAuditLog($conn, ' logged in');
                  exit;
              } else {
                  $error .= '<p class="error">The password is not valid.</p>';
