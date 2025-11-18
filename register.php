@@ -11,6 +11,15 @@ if ($conn->connect_error) {
     exit('Error Connecting to the DATABASE form' . $conn->connect_error);
 }
 
+function addAuditLog($conn, $action) {
+    if ($stmt = $conn->prepare('UPDATE users SET auditlog = CONCAT(IFNULL(auditlog, ""), ?) WHERE username = ?')) {
+        $logEntry = "\n" . date('Y-m-d H:i:s') . " - {$_SESSION['username']} {$action}";
+        $stmt->bind_param('ss', $logEntry, $_SESSION['username']);
+        $stmt->execute();
+        $stmt->close();
+    }
+}
+
 // Require action
 if (!isset($_POST['action']) || $_POST['action'] === '') {
     exit('Empty Field(s)');
@@ -63,6 +72,7 @@ if ($action === 'create') {
             $stmt->close();
             $conn->close();
             exit('Error: Username already exists. Try again!');
+            addAuditLog($conn, ' tried to create a user that already exists');
         }
         $stmt->close();
     } else {
@@ -75,6 +85,7 @@ if ($action === 'create') {
         $stmt->bind_param('ssssss', $_POST['username'],$_POST['id'], $password, $_POST['email'], $_POST['accesslevel'], $_POST['employeerole']);
         if ($stmt->execute()) {
             echo 'Successfully Registered!';
+            addAuditLog($conn, ' created ' . $_POST['username']);
         } else {
             echo 'Error Occurred!';
         }
@@ -101,6 +112,7 @@ if ($action === 'read') {
     if ($byUsername) {
         if ($stmt = $conn->prepare('SELECT email FROM users WHERE username = ?')) {
             $stmt->bind_param('s', $_POST['username']);
+            addAuditLog($conn, ' viewed email of ' . $_POST['username']);
         } else { $conn->close(); exit('Error Occurred!'); }
     } else {
         if ($stmt = $conn->prepare('SELECT email FROM users WHERE id = ?')) {
@@ -142,6 +154,7 @@ if ($action === 'update') {
             $stmt->close();
             $conn->close();
             exit('No Record Found!');
+            addAuditLog($conn, ' tried to update a user that does not exist');
         }
         $stmt->close();
     } else {
@@ -154,6 +167,7 @@ if ($action === 'update') {
         $stmt->bind_param('ss', $_POST['email'], $_POST['username']);
         if ($stmt->execute()) {
             echo 'Successfully Updated!';
+            addAuditLog($conn, ' updated email of ' . $_POST['username']);
         } else {
             echo 'Error Occurred!';
         }
@@ -182,6 +196,7 @@ if ($action === 'delete') {
             $stmt->close();
             $conn->close();
             exit('No Record Found!');
+            addAuditLog($conn, ' tried to delete a user that does not exist');
         }
         $stmt->close();
     } else {
@@ -193,6 +208,7 @@ if ($action === 'delete') {
         $stmt->bind_param('s', $_POST['username']);
         if ($stmt->execute()) {
             echo 'Successfully Deleted!';
+            addAuditLog($conn, ' deleted ' . $_POST['username']);
         } else {
             echo 'Error Occurred!';
         }
