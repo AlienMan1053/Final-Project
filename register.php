@@ -1,5 +1,5 @@
 <?php
-// register_fixed.php — CRUD with email-only READ/UPDATE, keeping your echo/exit style.
+
 
 $DATABASE_HOST = 'localhost';
 $DATABASE_USER = 'reza';
