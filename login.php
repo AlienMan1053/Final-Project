@@ -52,10 +52,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                  $_SESSION["accesslevel"] = $row['accesslevel'];
                  $_SESSION["employeerole"] = $row['employeerole'];
 
+                 addAuditLog($conn, ' logged in');
                  $query->close();
                  $conn->close();
                  header("Location: register.html");
-                 addAuditLog($conn, ' logged in');
                  exit;
              } else {
                  $error .= '<p class="error">The password is not valid.</p>';
